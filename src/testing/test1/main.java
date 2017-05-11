@@ -15,19 +15,12 @@ import java.util.TreeSet;
  */
 public class main {
     public static void main(String[] args){
-        /*EntitiesParser e = new EntitiesParser(
+        EntitiesParser e = new EntitiesParser(
                 "D:\\Idea Projects\\3dProject\\src\\entities\\mesh.xml",
                 "D:\\Idea Projects\\3dProject\\src\\entities\\textures.xml",
-                "D:\\Idea Projects\\3dProject\\src\\entities\\objects.xml");
-        e.parseMesh();
-        e.parseTexture();*/
+                "D:\\Idea Projects\\3dProject\\src\\entities\\objects.xml", null);
 
-        Vector3f v = new Vector3f(1,0,0);
-        Quaternion q1 = Maths.getQuaternion(new Vector3f(0,0,1),90);
-        Quaternion q2 = Maths.getQuaternion(new Vector3f(1,1,1), 120);
-        Maths.rotate(v, q2);
-        Maths.rotate(v, q1);
-        System.out.println(v);
+
 
 
 

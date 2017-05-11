@@ -5,17 +5,18 @@ import collisions.Parallelepiped;
 import collisions.Shape;
 import collisions.Sphere;
 import com.sun.istack.internal.NotNull;
-import org.lwjgl.Sys;
+import models.RawModel;
+import models.TexturedModel;
 import org.lwjgl.util.vector.Vector3f;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-import sun.security.provider.SHA;
+import renderEngine.Loader;
+import renderEngine.OBJLoader;
+import textures.ModelTexture;
+import toolbox.Maths;
 
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +27,7 @@ public class EntitiesParser {
     private final String MESH_FILE;
     private final String TEXTURE_FILE;
     private final String OBJECTS_FILE;
+    private final Loader loader;
 
     private Document meshDocument = null;
     private Document textureDocument = null;
@@ -33,17 +35,134 @@ public class EntitiesParser {
 
     private List<Mesh> meshList = new ArrayList<>();
     private List<Texture> textureList = new ArrayList<>();
-    private List<TextEntity> textEntityList = new ArrayList<>();
+    private List<TexturedEntity> textEntityList = new ArrayList<>();
 
-    public EntitiesParser(String MESH_FILE, String TEXTURE_FILE, String OBJECTS_FILE) {
+    public EntitiesParser(String MESH_FILE, String TEXTURE_FILE, String OBJECTS_FILE, Loader loader) {
         this.MESH_FILE = MESH_FILE;
         this.TEXTURE_FILE = TEXTURE_FILE;
         this.OBJECTS_FILE = OBJECTS_FILE;
+        this.loader = loader;
     }
 
+    public List<CollisionedEntity> getEntities(){
+        parseMesh();
+        parseTexture();
+        parseEntity();
+
+        List<CollisionedEntity> collisionedEntityList = new ArrayList<>();
+        loadToVAOMeshes();
+        loadtoVAOTextures();
+        for (int i = 0; i < textEntityList.size(); i++) {
+            TexturedEntity textured = textEntityList.get(i);
+            TexturedModel texturedModel = new TexturedModel(textured.getTexture().getMesh().getRawModel(), new ModelTexture(textured.getTexture().getId()));
+            float scale = textured.getScale();
+            List<Shape> newShapes = new ArrayList<>();
+            List<Shape> oldShapes = textured.getTexture().getMesh().getCollisionList();
+            for (int j = 0; j < oldShapes.size(); j++) {
+                Shape shape = oldShapes.get(j);
+                if(shape instanceof Cylinder){
+                    Cylinder oldCylinder = (Cylinder) shape;
+                    Vector3f position = Maths.scaleVector(oldCylinder.getPosition(), scale);
+                    float height = oldCylinder.getHeight() * scale;
+                    float radius = oldCylinder.getRadius() * scale;
+
+                    newShapes.add(new Cylinder(position, oldCylinder.getRotation(), height, radius));
+                }
+                if(shape instanceof Sphere){
+                    Sphere oldSphere = (Sphere) shape;
+                    Vector3f position = Maths.scaleVector(oldSphere.getPosition(), scale);
+                    float radius = oldSphere.getRad() * scale;
+
+                    newShapes.add(new Sphere(position, radius));
+                }
+                if(shape instanceof Parallelepiped){
+                    Parallelepiped oldParallelepiped = (Parallelepiped) shape;
+                    Vector3f position = Maths.scaleVector(oldParallelepiped.getPosition(), scale);
+                    Vector3f abc = Maths.scaleVector(oldParallelepiped.getABC(), scale);
+
+                    newShapes.add(new Parallelepiped(position, oldParallelepiped.getRotation(), abc.x, abc.y, abc.z));
+                }
+            }
+
+            CollisionedEntity newCollisionedEntity =
+                    new CollisionedEntity(texturedModel,textured.getPosition(),
+                    textured.getRotation().x, textured.getRotation().y, textured.getRotation().z, scale, newShapes);
+            collisionedEntityList.add(newCollisionedEntity);
+        }
 
 
-    public void parseTexture(){
+        return collisionedEntityList;
+    }
+
+    private void loadToVAOMeshes(){
+        for (int i = 0; i < meshList.size(); i++) {
+            Mesh mesh = meshList.get(i);
+            RawModel temp = OBJLoader.loadObjModel(mesh.getPath(),loader);
+            mesh.setRawModel(temp);
+        }
+    }
+
+    private void loadtoVAOTextures(){
+        for (int i = 0; i < textureList.size(); i++) {
+            Texture t = textureList.get(i);
+            t.setId(loader.loadTexture(t.getTexture()));
+        }
+    }
+
+    private void parseEntity(){
+        try{
+            entityDocument = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(OBJECTS_FILE);
+            Node root = entityDocument.getDocumentElement();
+            NodeList entities = root.getChildNodes();
+            for (int i = 0; i < entities.getLength(); i++) {
+                Node entity = entities.item(i);
+                if(entity.getNodeType() == Node.TEXT_NODE) continue;
+                NodeList options = entity.getChildNodes();
+                String entityName = entity.getNodeName();
+                Vector3f position = new Vector3f(0,0,0);
+                Vector3f rotation = new Vector3f(0,0,0);
+                float scale = 1;
+                //System.out.println(entityName);
+                for (int j = 0; j < options.getLength(); j++) {
+                    Node option = options.item(j);
+                    if(option.getNodeType() == Node.TEXT_NODE) continue;
+
+                    if(option.getNodeName().equals("position")){
+                        position = parseVector(option);
+                        //System.out.println(position);
+                    }
+                    if(option.getNodeName().equals("rotation")){
+                        rotation = parseVector(option);
+                        //System.out.println(rotation);
+                    }
+                    if(option.getNodeName().equals("scale")){
+                        scale = parseFloat(option);
+                        //System.out.println(scale);
+                    }
+                }
+
+                M:
+                for(int j = 0; j < textureList.size(); j++){
+                    if(textureList.get(j).getName().equals(entityName)){
+                        textEntityList.add(new TexturedEntity(textureList.get(j), position, rotation, scale));
+                        break M;
+                    }
+                }
+            }
+        }catch (Exception e){
+            System.err.println("Exception in parseObjects");
+            e.printStackTrace();
+            System.exit(-1);
+        }
+
+
+//        for(TexturedEntity e : textEntityList){
+//            System.out.println("------------------------------------------");
+//            System.out.println(e.toString());
+//        }
+    }
+
+    private void parseTexture(){
         try{
 
             textureDocument = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(TEXTURE_FILE);
@@ -69,12 +188,12 @@ public class EntitiesParser {
                     }else{
                         Mesh mesh = null;
                         for (int j = 0; j < meshList.size(); j++) {
-                            if(meshList.get(j).path.equals(meshName)){
+                            if(meshList.get(j).getPath().equals(meshName)){
                                 mesh = meshList.get(j);
                             }
                         }
                         if(mesh != null){
-                            Texture newTexture = new Texture(name, textureName,mesh);
+                            Texture newTexture = new Texture(name, textureName, mesh);
                             textureList.add(newTexture);
                         }else System.err.println("There no mesh object");
 
@@ -94,13 +213,13 @@ public class EntitiesParser {
 
 
 
-        System.out.println("\n\n\n");
-        for (Texture x: textureList) {
-            System.out.println(x);
-        }
+//        System.out.println("\n\n\n");
+//        for (Texture x: textureList) {
+//            System.out.println(x);
+//        }
     }
 
-    public void parseMesh(){
+    private void parseMesh(){
         try {
             meshDocument = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(MESH_FILE);
             Node root = meshDocument.getDocumentElement();
@@ -116,7 +235,7 @@ public class EntitiesParser {
                         if(option.getNodeType() != Node.TEXT_NODE){
                             if(option.getNodeName().equals("filename")){
                                 fileName = option.getTextContent().trim();
-                                System.out.println(fileName);
+                                //System.out.println(fileName);
                             }
                             if(option.getNodeName().equals("primitives")){
                                 shapeList = parsePrimitives(option);
@@ -263,7 +382,21 @@ public class EntitiesParser {
 
 
 class Mesh{
-    public final String path;
+    private RawModel rawModel;
+
+    public RawModel getRawModel() {
+        return rawModel;
+    }
+
+    public void setRawModel(RawModel rawModel) {
+        this.rawModel = rawModel;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    private final String path;
     private List<Shape> collisionList;
 
     public Mesh(String path, List<Shape> collisionList) {
@@ -285,9 +418,14 @@ class Mesh{
 }
 
 class Texture{
+    private int id;
     private final String name;
     private final String texture;
     private Mesh mesh;
+
+    public String getTexture() {
+        return texture;
+    }
 
     public Texture(String name, String texture, @NotNull Mesh mesh) {
         this.name = name;
@@ -303,6 +441,14 @@ class Texture{
         return mesh;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     @Override
     public String toString() {
         return "Texture{" +
@@ -313,16 +459,42 @@ class Texture{
     }
 }
 
-class TextEntity{
+class TexturedEntity{
     private Texture texture;
     private Vector3f position;
     private Vector3f rotation;
     private float scale;
 
-    public TextEntity(Texture texture, Vector3f position, Vector3f rotation, float scale) {
+    public TexturedEntity(Texture texture, Vector3f position, Vector3f rotation, float scale) {
         this.texture = texture;
         this.position = position;
         this.rotation = rotation;
         this.scale = scale;
+    }
+
+    public Texture getTexture() {
+        return texture;
+    }
+
+    public Vector3f getPosition() {
+        return position;
+    }
+
+    public Vector3f getRotation() {
+        return rotation;
+    }
+
+    public float getScale() {
+        return scale;
+    }
+
+    @Override
+    public String toString() {
+        return "TexturedEntity{" +
+                "\ntexture=" + texture +
+                ", \nposition=" + position +
+                ", \nrotation=" + rotation +
+                ", \nscale=" + scale +
+                '}';
     }
 }

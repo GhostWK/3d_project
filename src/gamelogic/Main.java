@@ -5,22 +5,20 @@ import collisions.Cylinder;
 import collisions.Shape;
 import collisions.Sphere;
 import entities.*;
-import gamelogic.Map.Chunk;
+
 import gamelogic.Map.WorldRenderer;
-import guis.GuiRenderer;
-import guis.GuiTexture;
 import models.RawModel;
 import models.TexturedModel;
 import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.util.vector.Vector2f;
+
 import org.lwjgl.util.vector.Vector3f;
 import renderEngine.DisplayManager;
 import renderEngine.Loader;
 import renderEngine.MasterRenderer;
 import renderEngine.OBJLoader;
-import shaders.StaticShader;
 import textures.ModelTexture;
+
+import static gamelogic.SettingsClass.*;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -114,6 +112,14 @@ public class Main {
         list.add(sphere);
         CollisionedEntity entity = new CollisionedEntity(new TexturedModel(OBJLoader.loadObjModel("sphere", loader),new ModelTexture(loader.loadTexture("sphere"))),
                 new Vector3f(100,20,100),0,0,0,5, list);
+
+
+        EntitiesParser entitiesParser = new EntitiesParser(MESH_FILE, TEXTURE_FILE, ENTITIES_FILE, loader);
+        List<CollisionedEntity> entitiesToDraw = entitiesParser.getEntities();
+        System.out.println(entitiesToDraw.get(0).getRotZ());
+
+
+
        // t.setReflectibity(0);
         //t.setShineDamper(0.99f);
 
@@ -163,7 +169,9 @@ public class Main {
             renderer.render(light, camera);
 
 
-
+            for(CollisionedEntity collisionedEntity : entitiesToDraw){
+                renderer.processEntity(collisionedEntity);
+            }
             //guiRenderer.render(guis);
 
             //centity.increaseRotation(0,0.1f,0);

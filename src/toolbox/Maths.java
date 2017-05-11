@@ -74,4 +74,12 @@ public class Maths {
         return q;
     }
 
+    public static Vector3f scaleVector(Vector3f vector, float scale){
+        Vector3f newVector = new Vector3f();
+        newVector.setX(vector.getX() * scale);
+        newVector.setY(vector.getY() * scale);
+        newVector.setZ(vector.getZ() * scale);
+        return newVector;
+    }
+
 }

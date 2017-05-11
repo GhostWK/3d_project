@@ -15,11 +15,17 @@ public class Parallelepiped extends Shape{
     private float a;
     private float b;
     private float c;
+
+
     public Parallelepiped(Vector3f position, Vector3f rotation,float a, float b, float c) {
         super(position, rotation, (float) (Math.sqrt(a*a+b*b +c*c)/4));
         this.a = a;
         this.b = b;
         this.c = c;
+    }
+
+    public Vector3f getABC(){
+        return new Vector3f(a,b,c);
     }
 
     @Override
