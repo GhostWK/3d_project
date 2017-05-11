@@ -4,9 +4,9 @@
 
     <g_tree>
         <position>
-            <x>10</x>
-            <y>10</y>
-            <z>20</z>
+            <x>500</x>
+            <y>3</y>
+            <z>500</z>
         </position>
         <rotation>
             <x>0</x>
@@ -20,9 +20,9 @@
 
     <g_tree>
         <position>
-            <x>10</x>
-            <y>10</y>
-            <z>10</z>
+            <x>525</x>
+            <y>1</y>
+            <z>510</z>
         </position>
         <rotation>
             <x>0</x>
@@ -36,9 +36,9 @@
 
     <g_tree>
         <position>
-            <x>20</x>
-            <y>10</y>
-            <z>10</z>
+            <x>570</x>
+            <y>2</y>
+            <z>510</z>
         </position>
         <rotation>
             <x>0</x>
@@ -52,9 +52,9 @@
 
     <g_tree>
         <position>
-            <x>20</x>
-            <y>10</y>
-            <z>20</z>
+            <x>510</x>
+            <y>2</y>
+            <z>500</z>
         </position>
         <rotation>
             <x>0</x>

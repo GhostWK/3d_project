@@ -13,8 +13,12 @@ import renderEngine.DisplayManager;
  */
 public class Player extends Entity{
 
+    private boolean b1 = false;
+    private boolean b2 = false;
 
-    private static final float RUN_SPEED = 20;
+    private boolean v = false;
+
+    private static final float RUN_SPEED = 100;
     private static final float TURN_SPEED = 160;
     private static final float GRAVITY = -50;
     private static final float JUMP_POWER = 30;
@@ -56,15 +60,17 @@ public class Player extends Entity{
         float dz = (float) (distance* Math.cos(Math.toRadians(super.getRotY())));
         super.increasePosition(dx, 0, dz);
 
+        if(!v){
+            upwardsSpeed += GRAVITY * DisplayManager.getFrameTimeSeconds();
+            super.increasePosition(0, upwardsSpeed * DisplayManager.getFrameTimeSeconds(), 0);
+            if(upwardsSpeed != 0) setTERRAIN_HEIGHT(Main.getWorldRenderer().calculateLowCollision(getPosition().x, getPosition().z));
+            if(super.getPosition().y< TERRAIN_HEIGHT){
+//            setTERRAIN_HEIGHT(Main.getWorldRenderer().calculateLowCollision(getPosition().x, getPosition().z));
+                upwardsSpeed = 0;
+                super.getPosition().y = TERRAIN_HEIGHT+0.00001f;
+            }
+        }
 
-//        upwardsSpeed += GRAVITY * DisplayManager.getFrameTimeSeconds();
-//        super.increasePosition(0, upwardsSpeed * DisplayManager.getFrameTimeSeconds(), 0);
-//        if(upwardsSpeed != 0) setTERRAIN_HEIGHT(Main.getWorldRenderer().calculateLowCollision(getPosition().x, getPosition().z));
-//        if(super.getPosition().y< TERRAIN_HEIGHT){
-////            setTERRAIN_HEIGHT(Main.getWorldRenderer().calculateLowCollision(getPosition().x, getPosition().z));
-//            upwardsSpeed = 0;
-//            super.getPosition().y = TERRAIN_HEIGHT+0.00001f;
-//        }
 
     }
 
@@ -90,13 +96,27 @@ public class Player extends Entity{
             this.currentTurnSpeed = 0;
         }
 
-//        if(Keyboard.isKeyDown(Keyboard.KEY_SPACE)){
-//            jump();
-//        }
-        if(Keyboard.isKeyDown(Keyboard.KEY_SPACE)){
-            super.increasePosition(0,10* DisplayManager.getFrameTimeSeconds(),0);
-        }else if(Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)){
-            super.increasePosition(0,-10*DisplayManager.getFrameTimeSeconds(),0);
+        if(Keyboard.isKeyDown(Keyboard.KEY_SPACE) && !v){
+            jump();
         }
+        if(Keyboard.isKeyDown(Keyboard.KEY_B)){
+            b1 = true;
+        }else{
+            b1 = false;
+        }
+
+        if(b1 && !b2){
+            v = !v;
+        }
+        if(v){
+            if(Keyboard.isKeyDown(Keyboard.KEY_SPACE)){
+                super.increasePosition(0,30* DisplayManager.getFrameTimeSeconds(),0);
+            }else if(Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)){
+                super.increasePosition(0,-30*DisplayManager.getFrameTimeSeconds(),0);
+            }
+        }
+
+
+        b2 = b1;
     }
 }

@@ -24,9 +24,11 @@ public class Collisions {
     }
 
     public boolean checkCollision(CollisionedEntity entity){
+
        if (!checkSphereCollision(entity)){
            return false;
        }
+
         Vector3f playerPos = Vector3f.add(player.getCollision().getPosition(),player.getPosition(),null);
         Shape shape = null;
         Cylinder cylinder = player.getCollision();
@@ -71,6 +73,8 @@ public class Collisions {
             float xRad = x.getRad();
             xPos = Vector3f.sub(playerPos, xPos, xPos);
             if(xPos.length() < playerRad + xRad) return  true;
+
+//            System.out.println(xPos.length());
         }
 
         return false;
@@ -89,14 +93,7 @@ public class Collisions {
         for (int i = 0; i < firstNormals.size(); i++) {
             planes.add(new Plane(firstNormals.get(i)));
         }
-//        M:
-//        for (int i = 0; i < secondNormals.size() ; i++) {
-//            Vector3f temp = secondNormals.get(i);
-//            for (int j = 0; j < planes.size() ; j++) {
-//                if (planes.get(j).getNormal().equals(temp))continue M;
-//            }
-//            planes.add(new Plane(temp));
-//        }
+
         return planes;
     }
 

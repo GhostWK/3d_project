@@ -51,7 +51,7 @@ public class EntitiesParser {
 
         List<CollisionedEntity> collisionedEntityList = new ArrayList<>();
         loadToVAOMeshes();
-        loadtoVAOTextures();
+        loadToVAOTextures();
         for (int i = 0; i < textEntityList.size(); i++) {
             TexturedEntity textured = textEntityList.get(i);
             TexturedModel texturedModel = new TexturedModel(textured.getTexture().getMesh().getRawModel(), new ModelTexture(textured.getTexture().getId()));
@@ -102,7 +102,7 @@ public class EntitiesParser {
         }
     }
 
-    private void loadtoVAOTextures(){
+    private void loadToVAOTextures(){
         for (int i = 0; i < textureList.size(); i++) {
             Texture t = textureList.get(i);
             t.setId(loader.loadTexture(t.getTexture()));
@@ -279,13 +279,13 @@ public class EntitiesParser {
             }
 
             if(shape.getNodeName().equals("Cylinder")){
-                shapeList.add(parseCylender(shape));
+                shapeList.add(parseCylinder(shape));
             }
         }
         return shapeList;
     }
 
-    private Cylinder parseCylender(Node node){
+    private Cylinder parseCylinder(Node node){
         Vector3f position = new Vector3f(0,0,0);
         Vector3f rotation = new Vector3f(0,0,0);
         float height = 0;
@@ -383,21 +383,19 @@ public class EntitiesParser {
 
 class Mesh{
     private RawModel rawModel;
+    private final String path;
+    private List<Shape> collisionList;
 
     public RawModel getRawModel() {
         return rawModel;
     }
-
     public void setRawModel(RawModel rawModel) {
         this.rawModel = rawModel;
     }
-
     public String getPath() {
         return path;
     }
 
-    private final String path;
-    private List<Shape> collisionList;
 
     public Mesh(String path, List<Shape> collisionList) {
         this.path = path;

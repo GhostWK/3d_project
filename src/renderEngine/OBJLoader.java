@@ -88,14 +88,7 @@ public class OBJLoader {
         for (int i = 0; i < indices.size(); i++) {
             indicesArray[i] = indices.get(i);
         }
-        System.out.println("VERT: " + verticesArray.length);
-//        for(float x : verticesArray) System.out.println("\t"+ x);
-        System.out.println("TEXT: " + textureArray.length);
-//        for(float x : textureArray) System.out.println("\t"+ x);
-        System.out.println("NORM: " + normalsArray.length);
-//        for(float x : normalsArray) System.out.println("\t"+ x);
-        System.out.println("INDS: " + indicesArray.length);
-//        for(int x : indicesArray) System.out.println("\t"+ x);
+
         return loader.loadToVAO(verticesArray, textureArray, normalsArray, indicesArray);
     }
 

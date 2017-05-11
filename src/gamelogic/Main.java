@@ -88,8 +88,8 @@ public class Main {
         worldRenderer.read();
 
 
-        RawModel cube = OBJLoader.loadObjModel("cylinder", loader);
-        ModelTexture modelTexture = new ModelTexture(loader.loadTexture("cylinder"));
+        RawModel cube = OBJLoader.loadObjModel("monkey", loader);
+        ModelTexture modelTexture = new ModelTexture(loader.loadTexture("Monkey"));
         TexturedModel cubeTextured = new TexturedModel(cube, modelTexture);
 
 
@@ -116,9 +116,9 @@ public class Main {
 
         EntitiesParser entitiesParser = new EntitiesParser(MESH_FILE, TEXTURE_FILE, ENTITIES_FILE, loader);
         List<CollisionedEntity> entitiesToDraw = entitiesParser.getEntities();
-        System.out.println(entitiesToDraw.get(0).getRotZ());
+        System.out.println(entitiesParser.getEntities().get(0).getCollisionList().size());
 
-
+        System.out.println(entitiesToDraw.get(0).getCollisionList().get(0).toString());
 
        // t.setReflectibity(0);
         //t.setShineDamper(0.99f);
@@ -141,12 +141,24 @@ public class Main {
                 frame.add(l);
                 while(true){
                     try {
-                        Thread.sleep(200);
+                        Thread.sleep(50);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    if(collisionsClass.checkCollision(entity)) l.setText("yes");
-                    else l.setText("no");
+
+
+
+
+                        if(collisionsClass.checkCollision(entitiesToDraw.get(0))) {
+                            l.setText("yes");
+                        }else{
+                            l.setText("no");
+                        }
+
+
+
+
+
                 }
             }
         };

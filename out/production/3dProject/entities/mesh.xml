@@ -30,43 +30,20 @@ Possible primitives:
         <primitives>
             <Sphere>
                 <position>
-                    <x>1</x>
-                    <y>1</y>
-                    <z>2</z>
+                    <x>0.11177</x>
+                    <y>3.92649</y>
+                    <z>-0.0721</z>
                 </position>
-                <rad>3</rad>
+                <rad>1</rad>
             </Sphere>
-            <Parallelepiped>
+            <Sphere>
                 <position>
-                    <x>1</x>
-                    <y>1</y>
-                    <z>2</z>
+                    <x>1.05649</x>
+                    <y>2.5953</y>
+                    <z>0.19986</z>
                 </position>
-                <rotation>
-                    <x>0</x>
-                    <y>0</y>
-                    <z>0</z>
-                </rotation>
-                <abc>
-                    <x>1</x>
-                    <y>1</y>
-                    <z>1</z>
-                </abc>
-            </Parallelepiped>
-            <Cylinder>
-                <position>
-                    <x>1</x>
-                    <y>1</y>
-                    <z>2</z>
-                </position>
-                <rotation>
-                    <x>0</x>
-                    <y>0</y>
-                    <z>0</z>
-                </rotation>
-                <radius>3</radius>
-                <height>8</height>
-            </Cylinder>
+                <rad>0.397</rad>
+            </Sphere>
         </primitives>
     </tree>
 
