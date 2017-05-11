@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-->
+Possible primitives:
+    Sphere
+        Vector3f position
+        float rad
+
+    Cylinder (only for player)
+        Vector3f position
+        Vector3f rotation
+        float height
+        float radius
+
+    Parallelepiped
+        Vector3f position
+        Vector3f rotation
+        Vector3d abc
+
+
+    <Vector3f>
+        <x>0</x>
+        <y>0</y>
+        <z>0</z>
+<-->
+<mesh>
+    <tree>
+        <filename>
+            tree
+        </filename>
+        <primitives>
+            <Sphere>
+                <position>
+                    <x>1</x>
+                    <y>1</y>
+                    <z>2</z>
+                </position>
+                <rad>3</rad>
+            </Sphere>
+            <Parallelepiped>
+                <position>
+                    <x>1</x>
+                    <y>1</y>
+                    <z>2</z>
+                </position>
+                <rotation>
+                    <x>0</x>
+                    <y>0</y>
+                    <z>0</z>
+                </rotation>
+                <abc>
+                    <x>1</x>
+                    <y>1</y>
+                    <z>1</z>
+                </abc>
+            </Parallelepiped>
+            <Cylinder>
+                <position>
+                    <x>1</x>
+                    <y>1</y>
+                    <z>2</z>
+                </position>
+                <rotation>
+                    <x>0</x>
+                    <y>50</y>
+                    <z>0</z>
+                </rotation>
+                <radius>3</radius>
+                <height>8</height>
+            </Cylinder>
+        </primitives>
+    </tree>
+
+
+</mesh>

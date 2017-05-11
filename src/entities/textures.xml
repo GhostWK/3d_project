@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-->
+    <name of textured entity>
+        <mesh name (see mesh.xml>
+<-->
+<textures>
+    <g_tree>
+        <mesh>tree</mesh>
+        <texture>tree</texture>
+    </g_tree>
+
+
+</textures>
